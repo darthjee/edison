@@ -1,0 +1,88 @@
+version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - build-and-release:
+          requires: [test]
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only:
+                - master
+jobs:
+  test:
+    docker:
+      - image: darthjee/circleci_edison-base:0.0.1
+        environment:
+          EDISON_MYSQL_HOST: mysql
+          EDISON_MYSQL_PORT: 3306
+          EDISON_MYSQL_USER: edison
+          EDISON_MYSQL_NAME: edison
+          EDISON_MYSQL_PASSWORD: edison
+          EDISON_PASSWORD_SALT: abcd
+      - image: circleci/mysql:5.7
+        name: mysql
+        environment:
+          MYSQL_DATABASE: edison_test
+          MYSQL_USER: edison
+          MYSQL_PASSWORD: edison
+    steps:
+      - checkout
+      - run:
+          name: Set folder
+          command: cp source/* source/.??* ./ -r; rm source -rf
+      - run:
+          name: Prepare Coverage Test Report
+          command: cc-test-reporter before-build
+      - run:
+          name: Bundle Install
+          command: bundle install
+      - run:
+          name: Bower Install
+          command: bundle exec rake bower:install
+      - run:
+          name: Rubocop
+          command: rubocop
+      - run:
+          name: Wait for database
+          command: scripts/wait_for_db.sh
+      - run:
+          name: Migrate
+          command: RAILS_ENV=test bundle exec rake db:schema:load
+      - run:
+          name: RSpec
+          command: bundle exec rspec
+      - run:
+          name: Coverage Test Report
+          command: cc-test-reporter after-build --exit-code $?
+  build-and-release:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Make Build
+          command: scripts/release.sh build
+      - run:
+          name: Install Heroku
+          command: scripts/release.sh install
+      - run:
+          name: set heroku app
+          command: scripts/release.sh set-app
+      - run:
+          name: Heroku docker login
+          command: scripts/release.sh signin
+      - run:
+          name: Build heroku image
+          command: scripts/release.sh build-heroku
+      - run:
+          name: Release
+          command: scripts/release.sh release
+      - run:
+          name: Migrate
+          command: scripts/release.sh migrate

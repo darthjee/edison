@@ -1,0 +1,76 @@
+version: '3'
+services:
+  edison_mysql:
+    image: mysql:5.7
+    container_name: edison_mysql
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: edison
+    ports:
+      - 127.0.0.1:$EDISON_MYSQL_PORT:3306
+
+  #################### Base  ####################
+
+  base: &base
+    image: darthjee/edison
+    volumes:
+      - ./source:/home/app/app
+    links:
+      - edison_mysql:mysql
+    env_file: .env
+
+
+  base_build:
+    <<: *base
+    build:
+      context: .
+      dockerfile: Dockerfile.edison
+    command: echo done
+
+  production_base_build:
+    image: darthjee/production_edison
+    env_file: .env
+    environment:
+      RAILS_ENV: production
+    build:
+      context: .
+      dockerfile: Dockerfile.production_edison
+    links:
+      - edison_mysql:mysql
+    command: echo done
+  #################### CONTAINERS ####################
+
+  edison_app:
+    <<: *base
+    container_name: edison_app
+    command: /bin/bash bin/server.sh
+    depends_on: [base_build]
+    ports:
+      - 127.0.0.1:3000:3000
+    environment:
+      - RAILS_ENV=development
+      - EDISON_MYSQL_PORT=3306
+
+  edison_tests:
+    <<: *base
+    container_name: edison_tests
+    command: /bin/bash bin/tests.sh
+    depends_on: [base_build]
+    environment:
+      - RAILS_ENV=test
+
+  edison_root:
+    <<: *base
+    user: root
+    container_name: edison_root
+    command: /bin/bash
+    depends_on: [base_build]
+  edison_production:
+    depends_on: [production_base_build, edison_mysql]
+    container_name: edison_production
+    image: darthjee/production_edison
+    links:
+      - edison_mysql:mysql
+    env_file: .env
+    environment:
+      RAILS_ENV: production
