@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_21_122009) do
+ActiveRecord::Schema.define(version: 2020_09_21_210137) do
+
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "expiration"
+    t.index ["user_id"], name: "fk_rails_758836b4f0"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -24,4 +30,5 @@ ActiveRecord::Schema.define(version: 2020_09_21_122009) do
     t.index ["login"], name: "index_users_on_login", unique: true
   end
 
+  add_foreign_key "sessions", "users"
 end
