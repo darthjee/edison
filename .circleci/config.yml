@@ -7,8 +7,12 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - checks:
+          filters:
+            tags:
+              only: /.*/
       - build-and-release:
-          requires: [test]
+          requires: [test, checks]
           filters:
             tags:
               only: /.*/
@@ -47,9 +51,6 @@ jobs:
           name: Bower Install
           command: bundle exec rake bower:install
       - run:
-          name: Rubocop
-          command: rubocop
-      - run:
           name: Wait for database
           command: scripts/wait_for_db.sh
       - run:
@@ -61,6 +62,34 @@ jobs:
       - run:
           name: Coverage Test Report
           command: cc-test-reporter after-build --exit-code $?
+
+  checks:
+    docker:
+      - image: darthjee/circleci_edison-base:0.0.1
+        environment:
+          EDISON_MYSQL_HOST: mysql
+          EDISON_MYSQL_PORT: 3306
+          EDISON_MYSQL_USER: edison
+          EDISON_MYSQL_NAME: edison
+          EDISON_MYSQL_PASSWORD: edison
+          EDISON_PASSWORD_SALT: abcd
+      - image: circleci/mysql:5.7
+        name: mysql
+        environment:
+          MYSQL_DATABASE: edison_test
+          MYSQL_USER: edison
+          MYSQL_PASSWORD: edison
+    steps:
+      - checkout
+      - run:
+          name: Set folder
+          command: cp source/* source/.??* ./ -r; rm source -rf
+      - run:
+          name: Bundle Install
+          command: bundle install
+      - run:
+          name: Rubocop
+          command: rubocop
   build-and-release:
     machine: true
     steps:
@@ -86,3 +115,6 @@ jobs:
       - run:
           name: Migrate
           command: scripts/release.sh migrate
+      - run:
+          name: Populate fields
+          command: scripts/release.sh populate
