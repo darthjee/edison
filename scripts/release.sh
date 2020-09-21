@@ -31,7 +31,7 @@ case $ACTION in
     heroku container:login
     ;;
   "build")
-    make PROJECT=production_plague_inc build
+    make PROJECT=production_edison build
     ;;
   "build-heroku")
     make build-heroku
