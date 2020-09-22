@@ -1,14 +1,15 @@
 (function(angular) {
-  var module = angular.module('edison', [
-    'global',
-    'cyberhawk',
-    'kanto',
-    'home'
+  var module = angular.module("edison", [
+    "global",
+    "cyberhawk",
+    "kanto",
+    "home",
+    "login"
   ]);
 
-  module.config(['$httpProvider', function($httpProvider) {
+  module.config(["$httpProvider", function($httpProvider) {
     $httpProvider.defaults.headers.patch = {
-      'Content-Type': 'application/json;charset=utf-8'
+      "Content-Type": "application/json;charset=utf-8"
     };
   }]);
 }(window.angular));

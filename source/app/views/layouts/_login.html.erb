@@ -1,0 +1,71 @@
+<div
+  class="modal fade"
+  id="loginModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="loginModal"
+  aria-hidden="true"
+  ng-controller="Login.Controller as loginController">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          ng-click="loginController.clear()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" ng-show="loginController.incorrect">
+          Invalid User/Password
+        </div>
+        <div class="alert alert-danger" ng-show="loginController.error">
+          Unexpected error happened
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="login">Login</label>
+            <input
+                   type="text"
+                   class="form-control"
+                   id="login"
+                   placeholder="Usu&aacute;rio"
+                   ng-model="loginController.login">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                   type="password"
+                   class="form-control"
+                   id="password"
+                   placeholder="Senha"
+                   ng-model="loginController.password">
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+           ng-click="loginController.clear()"
+           type="button"
+           class="btn btn-default"
+           data-dismiss="modal">
+          Cancel
+        </button>
+        <button
+           type="submit"
+           class="btn btn-primary"
+           ng-disabled="loginController.ongoing"
+           ng-click="loginController.submit()">
+          Login
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,4 +1,7 @@
-<div class="flex-column align-items-center bg-light border-bottom shadow-sm">
+<div
+  class="flex-column align-items-center bg-light border-bottom shadow-sm"
+  ng-controller="Global.HeaderController as headerController">
+
   <nav class="navbar navbar-expand-sm navbar-light bg-light">
     <a class="navbar-brand" href="#/">
       Edison
@@ -15,8 +18,25 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
-        <li class="nav-item p-2">
-          <a href="#/" class="nav-link text-dark">New link</a>
+        <li class="nav-item p-2" ng-hide="headerController.logged">
+          <a
+            ng-hide="headerController.ongoing"
+            data-toggle="modal"
+            href="#"
+            class="nav-link text-dark"
+            data-target="#loginModal">
+            Login
+          </a>
+        </li>
+        <li class="nav-item p-2" ng-show="headerController.logged">
+          <a
+            ng-hide="headerController.ongoing"
+            data-toggle="modal"
+            href="#"
+            class="nav-link text-dark"
+            ng-click="headerController.logoff()">
+            Logoff
+          </a>
         </li>
       </ul>
     </div>

@@ -1,20 +1,20 @@
 (function(angular) {
-  var module = angular.module('plague_inc');
+  var module = angular.module("edison");
 
-  module.config(['kantoProvider', function(provider) {
+  module.config(["kantoProvider", function(provider) {
     provider.defaultConfig = {
-      controller: 'Cyberhawk.Controller',
-      controllerAs: 'gnc',
+      controller: "Cyberhawk.Controller",
+      controllerAs: "gnc",
       templateBuilder: function(route, params) {
-        return route + '?ajax=true';
+        return route + "?ajax=true";
       }
     }
 
     provider.configs = [{
-      routes: ['/'],
+      routes: ["/"],
       config: {
-        controller: 'Home.Controller',
-        controllerAs: 'hc'
+        controller: "Home.Controller",
+        controllerAs: "hc"
       }
     }];
     provider.$get().bindRoutes();
