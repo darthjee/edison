@@ -10,7 +10,7 @@
        ng-class="{'is-invalid': <%= ng_errors %>}"
        ng-model="<%= ng_model %>"
        placeholder="<%= placeholder %>"
-       type="text" />
+       type="<%= type %>" />
 
     <div class="invalid-feedback" ng-repeat="error in <%= ng_errors %>">
       {{error}}
