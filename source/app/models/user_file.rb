@@ -2,6 +2,7 @@
 
 class UserFile < ApplicationRecord
   belongs_to :user
+  has_many   :user_file_contents
 
   validates :user, presence: true
 
@@ -10,16 +11,17 @@ class UserFile < ApplicationRecord
             length: { maximum: 255 }
 
   validates :extension,
-            presence: true,
-            length: { maximum: 10 }
-
-  validates :type,
             length: { maximum: 10 }
 
   validates :category,
-            length: { maximum: 20 }
+            presence: true,
+            length: { maximum: 30 }
 
   validates :md5,
             presence: true,
             length: { maximum: 32 }
+
+  def self.from_file!(file)
+    FileParser.process(self, file)
+  end
 end

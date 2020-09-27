@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_23_180933) do
+ActiveRecord::Schema.define(version: 2020_09_27_212809) do
 
   create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -18,12 +18,17 @@ ActiveRecord::Schema.define(version: 2020_09_23_180933) do
     t.index ["user_id"], name: "fk_rails_758836b4f0"
   end
 
+  create_table "user_file_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_file_id", null: false
+    t.binary "content", null: false
+    t.index ["user_file_id"], name: "index_user_file_contents_on_user_file_id"
+  end
+
   create_table "user_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "name", null: false
     t.string "extension", limit: 10, null: false
-    t.string "type", limit: 10
-    t.string "category", limit: 20
+    t.string "category", limit: 30, null: false
     t.string "md5", limit: 32, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -44,5 +49,6 @@ ActiveRecord::Schema.define(version: 2020_09_23_180933) do
   end
 
   add_foreign_key "sessions", "users"
+  add_foreign_key "user_file_contents", "user_files"
   add_foreign_key "user_files", "users"
 end
