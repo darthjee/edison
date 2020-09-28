@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_28_080921) do
+ActiveRecord::Schema.define(version: 2020_09_28_120805) do
 
   create_table "folders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2020_09_28_080921) do
     t.datetime "updated_at", null: false
     t.bigint "folder_id"
     t.integer "size", null: false, unsigned: true
+    t.datetime "deleted_at"
     t.index ["category"], name: "index_user_files_on_category"
     t.index ["folder_id"], name: "fk_rails_23582aaaee"
     t.index ["user_id"], name: "index_user_files_on_user_id"

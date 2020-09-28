@@ -6,75 +6,64 @@ class UserFile < ApplicationRecord
       new(*args).process
     end
 
-    def initialize(relation, file)
+    def initialize(relation, file, folder)
       @relation = relation
-      @file     = file
+      @file     = Wrapper.new(file)
+      @folder   = folder
     end
 
     def process
       ActiveRecord::Base.transaction do
-        user_file.tap { save_chunks }
+        delete_old_entries
+
+        user_file.tap(&:undelete)
       end
     end
 
     private
 
-    attr_reader :relation, :file
-    delegate :eof?, :path, to: :file
+    attr_reader :relation, :file, :folder
+
+    delegate :path, :name, :extension, :category,
+             :size, :md5sum, to: :file
 
     def user_file
-      @user_file ||= relation.create(
-        name: name,
+      @user_file ||= find_or_create_user_file
+    end
+
+    def find_or_create_user_file
+      return scope.first if scope.any?
+
+      create_user_file
+    end
+
+    def create_user_file
+      scope.create(
         extension: extension,
-        md5: md5,
-        category: category,
+        category: category
+      ).tap do |entry|
+        ChunkSaver.process(entry, file)
+      end
+    end
+
+    def delete_old_entries
+      name_scope
+        .not_deleted
+        .update_all(deleted_at: Time.now)
+    end
+
+    def scope
+      @scope ||= name_scope.where(
+        md5: md5sum,
         size: size
       )
     end
 
-    def name
-      @name ||= path.gsub(%r{.*/}, '')
-    end
-
-    def extension
-      @extension ||= extract_extension
-    end
-
-    def category
-      FileCategory.from(extension)
-    end
-
-    def size
-      `wc -c #{path}`.gsub(/ .*\n/, '').to_i
-    end
-
-    def extract_extension
-      match = name.match(/\.(?<ext>[^.]*)$/)
-      return '' unless match
-
-      match[:ext]
-    end
-
-    def md5
-      `md5sum #{path}`.gsub(/ .*\n/, '')
-    end
-
-    def content_chunk
-      file.read(Settings.file_chunk_size)
-    end
-
-    def save_chunk
-      user_file.user_file_contents.create(
-        content: content_chunk
+    def name_scope
+      @name_scope ||= relation.where(
+        name: name,
+        folder: folder
       )
-    end
-
-    def save_chunks
-      loop do
-        break if eof?
-
-        save_chunk
-      end
     end
   end
 end

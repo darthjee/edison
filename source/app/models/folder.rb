@@ -2,7 +2,7 @@
 
 class Folder < ApplicationRecord
   belongs_to :user
-  belongs_to :folder
+  belongs_to :folder, required: false
   has_many :folders
 
   validates :user, presence: true

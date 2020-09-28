@@ -8,6 +8,7 @@ describe UserFile do
   describe '.from_file!' do
     let(:user)      { create(:user) }
     let(:file)      { File.open(file_path) }
+    let(:folder)    { create(:folder, user: user) }
     let(:chunks)    { Random.rand(4..10) }
     let(:blob_size) { Random.rand(10..20) }
     let(:file_path) { "/tmp/#{file_name}" }
@@ -17,7 +18,7 @@ describe UserFile do
     end
 
     let(:from_file) do
-      user.user_files.from_file!(file)
+      user.user_files.from_file!(file, folder)
     end
 
     let(:file_size) do
@@ -121,6 +122,10 @@ describe UserFile do
 
   describe 'validations' do
     it do
+      expect(user_file).to be_valid
+    end
+
+    it do
       expect(user_file).to validate_presence_of(:user)
     end
 
@@ -177,6 +182,10 @@ describe UserFile do
     it do
       expect(user_file).to validate_numericality_of(:size)
         .only_integer
+    end
+
+    it do
+      expect(user_file).not_to validate_presence_of(:folder)
     end
   end
 end

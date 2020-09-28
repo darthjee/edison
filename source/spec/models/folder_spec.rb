@@ -7,6 +7,10 @@ describe Folder do
 
   describe 'validations' do
     it do
+      expect(folder).to be_valid
+    end
+
+    it do
       expect(folder).to validate_presence_of(:user)
     end
 

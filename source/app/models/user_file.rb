@@ -4,6 +4,7 @@ class UserFile < ApplicationRecord
   MAX_FILE_SIZE = 1024 * 1024 * 1024 * 4
 
   belongs_to :user
+  belongs_to :folder, required: false
   has_many   :user_file_contents
 
   validates :user, presence: true
@@ -31,7 +32,13 @@ class UserFile < ApplicationRecord
               only_integer: true
             }
 
-  def self.from_file!(file)
-    FileParser.process(self, file)
+  scope :not_deleted, -> { where(deleted_at: nil) }
+
+  def self.from_file!(file, folder)
+    FileParser.process(self, file, folder)
+  end
+
+  def undelete
+    update(deleted_at: nil)
   end
 end
