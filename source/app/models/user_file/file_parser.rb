@@ -20,19 +20,20 @@ class UserFile < ApplicationRecord
     private
 
     attr_reader :relation, :file
-    delegate :eof?, to: :file
+    delegate :eof?, :path, to: :file
 
     def user_file
       @user_file ||= relation.create(
         name: name,
         extension: extension,
         md5: md5,
-        category: category
+        category: category,
+        size: size
       )
     end
 
     def name
-      @name ||= file.path.gsub(%r{.*/}, '')
+      @name ||= path.gsub(%r{.*/}, '')
     end
 
     def extension
@@ -43,6 +44,10 @@ class UserFile < ApplicationRecord
       FileCategory.from(extension)
     end
 
+    def size
+      `wc -c #{path}`.gsub(/ .*\n/, '').to_i
+    end
+
     def extract_extension
       match = name.match(/\.(?<ext>[^.]*)$/)
       return '' unless match
@@ -51,7 +56,7 @@ class UserFile < ApplicationRecord
     end
 
     def md5
-      `md5sum #{file.path}`.gsub(/ .*\n/, '')
+      `md5sum #{path}`.gsub(/ .*\n/, '')
     end
 
     def content_chunk

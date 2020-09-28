@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_27_212809) do
+ActiveRecord::Schema.define(version: 2020_09_28_080921) do
+
+  create_table "folders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.bigint "folder_id"
+    t.index ["folder_id"], name: "index_folders_on_folder_id"
+    t.index ["user_id"], name: "index_folders_on_user_id"
+  end
 
   create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -32,7 +40,10 @@ ActiveRecord::Schema.define(version: 2020_09_27_212809) do
     t.string "md5", limit: 32, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "folder_id"
+    t.integer "size", null: false, unsigned: true
     t.index ["category"], name: "index_user_files_on_category"
+    t.index ["folder_id"], name: "fk_rails_23582aaaee"
     t.index ["user_id"], name: "index_user_files_on_user_id"
   end
 
@@ -48,7 +59,10 @@ ActiveRecord::Schema.define(version: 2020_09_27_212809) do
     t.index ["login"], name: "index_users_on_login", unique: true
   end
 
+  add_foreign_key "folders", "folders"
+  add_foreign_key "folders", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_file_contents", "user_files"
+  add_foreign_key "user_files", "folders"
   add_foreign_key "user_files", "users"
 end

@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :measurements
   has_many :sessions
   has_many :user_files
+  has_many :folders
 
   def self.login(login:, password:)
     User.find_by!(login: login).verify_password!(password)

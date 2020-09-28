@@ -64,6 +64,11 @@ describe UserFile do
         .to eq(Digest::MD5.hexdigest(file_content))
     end
 
+    it 'saves file size' do
+      expect(from_file.size)
+        .to eq(file_size)
+    end
+
     it do
       expect { from_file }
         .to change(described_class, :count)
@@ -153,6 +158,25 @@ describe UserFile do
     it do
       expect(user_file).to validate_length_of(:md5)
         .is_at_most(32)
+    end
+
+    it do
+      expect(user_file).to validate_presence_of(:size)
+    end
+
+    it do
+      expect(user_file).to validate_numericality_of(:size)
+        .is_greater_than_or_equal_to(0)
+    end
+
+    it do
+      expect(user_file).to validate_numericality_of(:size)
+        .is_less_than(described_class::MAX_FILE_SIZE)
+    end
+
+    it do
+      expect(user_file).to validate_numericality_of(:size)
+        .only_integer
     end
   end
 end

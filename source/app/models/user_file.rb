@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UserFile < ApplicationRecord
+  MAX_FILE_SIZE = 1024 * 1024 * 1024 * 4
+
   belongs_to :user
   has_many   :user_file_contents
 
@@ -20,6 +22,14 @@ class UserFile < ApplicationRecord
   validates :md5,
             presence: true,
             length: { maximum: 32 }
+
+  validates :size,
+            presence: true,
+            numericality: {
+              less_than: MAX_FILE_SIZE,
+              greater_than_or_equal_to: 0,
+              only_integer: true
+            }
 
   def self.from_file!(file)
     FileParser.process(self, file)
