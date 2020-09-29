@@ -4,6 +4,7 @@ class Folder < ApplicationRecord
   belongs_to :user
   belongs_to :folder, required: false
   has_many :folders
+  has_many :user_files
 
   validates :user, presence: true
 

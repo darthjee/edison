@@ -66,11 +66,8 @@ services:
     command: /bin/bash
     depends_on: [base_build]
   edison_production:
-    depends_on: [production_base_build, edison_mysql]
+    env_file: .env.production
     container_name: edison_production
-    image: darthjee/production_edison
-    links:
-      - edison_mysql:mysql
-    env_file: .env
-    environment:
-      RAILS_ENV: production
+    image: registry.heroku.com/darthjee-edison/web
+    volumes:
+      - ./source/upload:/home/app/app/upload
