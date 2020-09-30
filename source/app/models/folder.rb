@@ -12,5 +12,9 @@ class Folder < ApplicationRecord
             presence: true,
             length: { maximum: 255 }
 
-  scope :root, -> { where(folder: nil) }
+  scope :not_deleted, -> { where(deleted_at: nil) }
+
+  def undelete
+    update(deleted_at: nil)
+  end
 end

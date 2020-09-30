@@ -86,6 +86,53 @@ describe Folder::PathParser do
       end
     end
 
+    context 'when one of the folders already exist and it has been delted' do
+      let!(:existing_folder) do
+        user.folders.create(name: :folder1, deleted_at: 1.day.ago)
+      end
+
+      let!(:deleted_file) do
+        create(:user_file, folder: existing_folder, deleted_at: 1.day.ago)
+      end
+
+      it do
+        expect { described_class.process(base, user: user) }
+          .to change { user.folders.reload.count }
+          .by(1)
+      end
+
+      it do
+        expect { described_class.process(base, user: user) }
+          .to change { user.user_files.reload.count }
+          .by(2)
+      end
+
+      it do
+        expect { described_class.process(base, user: user) }
+          .to change { existing_folder.reload.deleted_at }
+          .to(nil)
+      end
+
+      it do
+        expect { described_class.process(base, user: user) }
+          .not_to(change { deleted_file.reload.deleted_at })
+      end
+
+      context 'when processing is done' do
+        before { described_class.process(base, user: user) }
+
+        it 'creates file for base folder' do
+          expect(user.user_files.first.folder)
+            .to be_nil
+        end
+
+        it 'creates file for inner folder' do
+          expect(user.user_files.last.folder)
+            .to eq(user.folders.second)
+        end
+      end
+    end
+
     context 'when all folders already exist' do
       let(:folder_1) do
         user.folders.create(name: :folder1)

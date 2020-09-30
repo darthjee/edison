@@ -35,9 +35,9 @@ class Folder < ApplicationRecord
 
     def process_folders
       folders.each do |path|
-        name = path.gsub(%r{.*/}, '')
-        folder = user.folders.find_or_create_by(name: name, folder: parent)
-        self.class.process(path, user: user, parent: folder)
+        self.class.process(
+          path, user: user, parent: retrieve_folder(path)
+        )
       end
     end
 
@@ -47,6 +47,14 @@ class Folder < ApplicationRecord
           user.user_files.from_file!(file, parent)
         end
       end
+    end
+
+    def retrieve_folder(path)
+      name = path.gsub(%r{.*/}, '')
+
+      user.folders.find_or_create_by(
+        name: name, folder: parent
+      ).tap(&:undelete)
     end
   end
 end

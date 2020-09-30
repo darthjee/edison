@@ -2,20 +2,20 @@
 
 require 'spec_helper'
 
-describe FoldersController, :logged do
+describe UserFilesController, :logged do
   describe 'GET index' do
     let(:parameters) { { format: :json } }
 
-    let(:expected_response) { Folder::Decorator.new(root_folders).to_json }
-    let!(:root_folders)     { create_list(:folder, 3, user: logged_user) }
-    let(:first_folder)      { root_folders.first }
+    let(:expected_response) { UserFile::Decorator.new(root_user_files).to_json }
+    let!(:root_user_files)  { create_list(:user_file, 3, user: logged_user) }
+    let(:base_folder)       { create(:folder, user: logged_user) }
 
-    let!(:inner_folder) do
-      create(:folder, user: logged_user, folder: first_folder)
+    let!(:inner_file) do
+      create(:user_file, user: logged_user, folder: base_folder)
     end
 
     before do
-      create(:folder, user: logged_user, deleted_at: 1.day.ago)
+      create(:user_file, user: logged_user, deleted_at: 1.day.ago)
 
       get :index, params: parameters
     end
@@ -40,17 +40,17 @@ describe FoldersController, :logged do
           expect(response).to be_successful
         end
 
-        it 'returns user root folders' do
+        it 'returns user root files' do
           expect(response.body).to eq(expected_response)
         end
       end
     end
 
     context 'when folder is specified' do
-      let(:parameters) { { format: :json, folder_id: first_folder.id } }
+      let(:parameters) { { format: :json, folder_id: base_folder.id } }
 
       let(:expected_response) do
-        Folder::Decorator.new([inner_folder]).to_json
+        UserFile::Decorator.new([inner_file]).to_json
       end
 
       context 'when user is not logged', :not_logged do
@@ -72,7 +72,7 @@ describe FoldersController, :logged do
           expect(response).to be_successful
         end
 
-        it 'returns user inner folders' do
+        it 'returns user inner files' do
           expect(response.body).to eq(expected_response)
         end
       end

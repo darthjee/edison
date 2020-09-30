@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-class FoldersController < ApplicationController
+class UserFilesController < ApplicationController
   include OnePageApplication
   include FolderAccessible
 
-  resource_for :folder, only: %i[index]
+  resource_for :user_file, only: %i[index]
   before_action :check_logged!
 
   private
 
-  def folders
-    @folders ||= objects
+  def user_files
+    @user_files ||= objects
   end
 
   def all_objects
-    logged_user.folders
+    logged_user.user_files
   end
 end

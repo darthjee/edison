@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_28_120805) do
+ActiveRecord::Schema.define(version: 2020_09_30_130249) do
 
   create_table "folders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "name", null: false
     t.bigint "folder_id"
+    t.datetime "deleted_at"
     t.index ["folder_id"], name: "index_folders_on_folder_id"
     t.index ["user_id"], name: "index_folders_on_user_id"
   end

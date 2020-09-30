@@ -14,5 +14,7 @@ Rails.application.routes.draw do
 
   resources :folders, only: %i[index] do
     resources :folders, only: %i[index]
+    resources :user_files, only: %i[index]
   end
+  resources :user_files, only: %i[index]
 end
