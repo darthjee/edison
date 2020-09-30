@@ -41,7 +41,7 @@ describe User::Decorator do
       end
     end
 
-    context 'when user is invalid' do
+    context 'when user is invalid and has been validated' do
       let!(:user) { build(:user, login: nil) }
 
       let(:expected_json) do
@@ -53,6 +53,25 @@ describe User::Decorator do
           errors: {
             login: ["can't be blank"]
           }
+        }.deep_stringify_keys
+      end
+
+      before { user.valid? }
+
+      it 'include errors' do
+        expect(decorator.as_json).to eq(expected_json)
+      end
+    end
+
+    context 'when user is invalid and has not been validated' do
+      let!(:user) { build(:user, login: nil) }
+
+      let(:expected_json) do
+        {
+          id: user.id,
+          name: user.name,
+          login: user.login,
+          email: user.email
         }.deep_stringify_keys
       end
 

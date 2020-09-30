@@ -11,4 +11,6 @@ class Folder < ApplicationRecord
   validates :name,
             presence: true,
             length: { maximum: 255 }
+
+  scope :root, -> { where(folder: nil) }
 end
