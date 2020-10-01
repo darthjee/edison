@@ -5,7 +5,7 @@ class Folder < ApplicationRecord
     expose :breadcrumbs
 
     def breadcrumbs
-      1
+      []
     end
   end
 end
