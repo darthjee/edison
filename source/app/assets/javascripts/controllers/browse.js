@@ -10,8 +10,10 @@
     this.http     = bindedHttp.bind(this);
     this.notifier = notifier;
 
-    //_.bindAll(this)
+    _.bindAll(this, 'setFolders', 'setFiles');
+
     this.getFolders();
+    this.getFiles();
   }
 
   var fn = Controller.prototype;
@@ -24,6 +26,16 @@
 
   fn.setFolders = function(data) {
     this.folders = data;
+  };
+
+  fn.getFiles = function() {
+    this.http
+      .get(this.path('files'))
+      .success(this.setFiles);
+  };
+
+  fn.setFiles = function(data) {
+    this.files = data;
   };
 
   fn.path = function(entity) {
