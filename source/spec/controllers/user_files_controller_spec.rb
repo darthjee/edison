@@ -3,12 +3,212 @@
 require 'spec_helper'
 
 describe UserFilesController, :logged do
+  describe 'GET show' do
+    let(:parameters) do
+      { format: :json, folder_id: folder_id, id: user_file.id }
+    end
+
+    let(:expected_response) { UserFile::Decorator.new(user_file).to_json }
+    let(:user_file)         { create(:user_file, user: logged_user) }
+    let(:folder)            { create(:folder, user: logged_user) }
+    let(:folder_id)         { 0 }
+
+    before do
+      get :show, params: parameters
+    end
+
+    context 'when folder is not specified and file is not in a folder' do
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).to be_successful
+        end
+
+        it 'returns user root files' do
+          expect(response.body).to eq(expected_response)
+        end
+      end
+    end
+
+    context 'when folder is not specified and file is in a folder' do
+      let(:user_file) { create(:user_file, user: logged_user, folder: folder) }
+
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+    end
+
+    context 'when folder is specified and file is in the folder' do
+      let(:folder_id) { folder.id }
+      let(:user_file) { create(:user_file, user: logged_user, folder: folder) }
+
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).to be_successful
+        end
+
+        it 'returns user inner files' do
+          expect(response.body).to eq(expected_response)
+        end
+      end
+    end
+
+    context "when another user's folder is specified" do
+      let(:folder_id) { folder.id }
+      let(:folder)    { create(:folder) }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when folder has been deleted' do
+      let(:folder_id) { folder.id }
+
+      let(:folder) do
+        create(:folder, user: logged_user, deleted_at: 1.day.ago)
+      end
+
+      let(:user_file) do
+        create(:user_file, user: logged_user, folder: folder)
+      end
+
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+    end
+
+    context 'when file has been deleted' do
+      let(:folder_id) { folder.id }
+
+      let(:user_file) do
+        create(
+          :user_file, user: logged_user,
+                      folder: folder,
+                      deleted_at: 1.day.ago
+        )
+      end
+
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+    end
+  end
+
   describe 'GET index' do
-    let(:parameters) { { format: :json } }
+    let(:parameters) { { format: :json, folder_id: folder_id } }
 
     let(:expected_response) { UserFile::Decorator.new(root_user_files).to_json }
     let!(:root_user_files)  { create_list(:user_file, 3, user: logged_user) }
     let(:base_folder)       { create(:folder, user: logged_user) }
+    let(:folder_id)         { 0 }
 
     let!(:inner_file) do
       create(:user_file, user: logged_user, folder: base_folder)
@@ -47,7 +247,7 @@ describe UserFilesController, :logged do
     end
 
     context 'when folder is specified' do
-      let(:parameters) { { format: :json, folder_id: base_folder.id } }
+      let(:folder_id) { base_folder.id }
 
       let(:expected_response) do
         UserFile::Decorator.new([inner_file]).to_json
@@ -78,9 +278,33 @@ describe UserFilesController, :logged do
       end
     end
 
+    context 'when folder has been deleted' do
+      let(:folder_id) { folder.id }
+
+      let(:folder) do
+        create(:folder, user: logged_user, deleted_at: 1.day.ago)
+      end
+
+      let(:user_file) do
+        create(:user_file, user: logged_user, folder: folder)
+      end
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
     context "when another user's folder is specified" do
-      let(:parameters) { { format: :json, folder_id: folder.id } }
-      let(:folder)     { create(:folder) }
+      let(:folder_id) { folder.id }
+      let(:folder)    { create(:folder) }
 
       it do
         expect(response).not_to be_successful

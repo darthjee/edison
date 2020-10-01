@@ -9,12 +9,16 @@ module FolderAccessible
   end
 
   def parent_folder
-    return nil unless parent_folder_id
+    return nil if parent_folder_id.zero?
 
-    logged_user.folders.find(parent_folder_id)
+    user_folders.find(parent_folder_id)
   end
 
   def parent_folder_id
-    params[:folder_id]
+    params[:folder_id].to_i
+  end
+
+  def user_folders
+    @user_folders ||= logged_user.folders.not_deleted
   end
 end

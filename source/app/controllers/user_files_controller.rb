@@ -4,7 +4,7 @@ class UserFilesController < ApplicationController
   include OnePageApplication
   include FolderAccessible
 
-  resource_for :user_file, only: %i[index]
+  resource_for :user_file, only: %i[index show]
   before_action :check_logged!
 
   private
