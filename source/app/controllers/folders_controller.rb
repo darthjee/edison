@@ -18,6 +18,6 @@ class FoldersController < ApplicationController
   def folder
     return Folder.new if folder_id.to_i.zero?
 
-    folders.find(folder_id)
+    user_folders.find(folder_id)
   end
 end
