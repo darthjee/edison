@@ -1,25 +1,33 @@
-<div class="card-deck mb-3">
-  <div class="card mb-4 shadow-sm">
-    <div class="card-header">
-      <h4 class="my-0 font-weight-normal">
-        <span ng-repeat="folder in browseController.data.breadcrumbs">/
-          <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
-            {{folder.name}}
-          <% end %>
-        </span>/{{browseController.data.name}}
-      </h4>
-    </div>
-    <div class="card-body">
-      <ul class="list-group mt-3 mb-4">
-        <li class="list-group-item" ng-repeat="folder in browseController.folders">
-          <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
-            {{folder.name}}
-          <% end %>
-        </li>
-        <li class="list-group-item" ng-repeat="file in browseController.files">
-          {{file.name}}
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li ng-repeat="folder in browseController.data.breadcrumbs" class="breadcrumb-item">
+      <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
+        {{folder.name}}
+      <% end %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+       {{browseController.data.name}}
+    </li>
+  </ol>
+</nav>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="folder in browseController.folders">
+      <td>
+        <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
+          {{folder.name}}
+        <% end %>
+    </tr>
+    <tr ng-repeat="file in browseController.files">
+      <td>
+        {{file.name}}
+      </td>
+    </tr>
+  </tbody>
+</table>
