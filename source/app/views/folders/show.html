@@ -1,1 +1,19 @@
-SHOW FOLDER
+<div class="card-deck mb-3">
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header">
+      <h4 class="my-0 font-weight-normal">
+        Folder Name
+      </h4>
+    </div>
+    <div class="card-body">
+      <ul class="list-group mt-3 mb-4">
+        <li class="list-group-item" ng-repeat="folder in browseController.folders">
+          {{folder.name}}
+        </li>
+        <li class="list-group-item" ng-repeat="file in browseController.files">
+          {{file.name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
