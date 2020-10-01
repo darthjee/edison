@@ -15,6 +15,9 @@
   <thead>
     <tr>
       <th scope="col">Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">MD5</th>
+      <th scope="col">Size</th>
     </tr>
   </thead>
   <tbody>
@@ -25,9 +28,10 @@
         <% end %>
     </tr>
     <tr ng-repeat="file in browseController.files">
-      <td>
-        {{file.name}}
-      </td>
+      <td>{{file.name}}</td>
+      <td>{{file.category}}</td>
+      <td>{{file.md5}}</td>
+      <td>{{file.size}}</td>
     </tr>
   </tbody>
 </table>
