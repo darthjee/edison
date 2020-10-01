@@ -5,8 +5,12 @@ require 'spec_helper'
 describe Folder::DecoratorWithBreadcrumbs do
   subject(:decorator) { described_class.new(object) }
 
-  let(:object) { folder }
-  let!(:folder)  { create(:folder) }
+  let(:object)  { folder }
+  let(:user)    { create(:user) }
+  let(:parent)  { nil }
+  let!(:folder) do
+    create(:folder, user: user, folder: parent)
+  end
 
   describe '#as_json' do
     let(:expected_json) do
@@ -20,6 +24,39 @@ describe Folder::DecoratorWithBreadcrumbs do
 
     it 'returns meta data defined json' do
       expect(decorator.as_json).to eq(expected_json)
+    end
+
+    context 'when there is breadcrumb' do
+      let(:root) { create(:folder, user: user) }
+
+      let(:parent) do
+        create(:folder, user: user, folder: root)
+      end
+
+      let(:decorated_root) do
+        Folder::Decorator.new(root).as_json
+      end
+
+      let(:decorated_parent) do
+        Folder::Decorator.new(parent).as_json
+      end
+
+      before do
+        create(:folder, user: user)
+      end
+
+      let(:expected_json) do
+        {
+          id: folder.id,
+          name: folder.name,
+          breadcrumbs: [decorated_root, decorated_parent]
+
+        }.stringify_keys
+      end
+
+      it 'returns breadcrumbs' do
+        expect(decorator.as_json).to eq(expected_json)
+      end
     end
 
     context 'when object is an collecton' do
