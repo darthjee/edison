@@ -6,7 +6,8 @@ describe FoldersController, :logged do
   describe 'GET show' do
     let(:parameters) { { format: :json, id: folder_id } }
 
-    let(:expected_response) { Folder::Decorator.new(folder).to_json }
+    let(:decorator_class)   { Folder::DecoratorWithBreadcrumbs }
+    let(:expected_response) { decorator_class.new(folder).to_json }
     let!(:folder)           { create(:folder, user: logged_user) }
     let(:folder_id)         { folder.id }
 
@@ -15,7 +16,6 @@ describe FoldersController, :logged do
     end
 
     context 'when folder is not specified' do
-      let(:expected_response) { Folder::Decorator.new(folder).to_json }
       let(:folder)            { Folder.new }
       let(:folder_id)         { 0 }
 

@@ -4,7 +4,10 @@ class FoldersController < ApplicationController
   include OnePageApplication
   include FolderAccessible
 
-  resource_for :folder, only: %i[index show]
+  resource_for :folder, only: %i[index]
+  resource_for :folder,
+    only: %i[show],
+    decorator: Folder::DecoratorWithBreadcrumbs
   before_action :check_logged!
 
   private
