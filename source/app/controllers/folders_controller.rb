@@ -6,8 +6,8 @@ class FoldersController < ApplicationController
 
   resource_for :folder, only: %i[index]
   resource_for :folder,
-    only: %i[show],
-    decorator: Folder::DecoratorWithBreadcrumbs
+               only: %i[show],
+               decorator: Folder::DecoratorWithBreadcrumbs
   before_action :check_logged!
 
   private

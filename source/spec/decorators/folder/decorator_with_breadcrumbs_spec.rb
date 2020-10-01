@@ -78,5 +78,3 @@ describe Folder::DecoratorWithBreadcrumbs do
     end
   end
 end
-
-

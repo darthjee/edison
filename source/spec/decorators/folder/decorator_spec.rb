@@ -12,7 +12,7 @@ describe Folder::Decorator do
     let(:expected_json) do
       {
         id: folder.id,
-        name: folder.name,
+        name: folder.name
       }.stringify_keys
     end
 
@@ -27,7 +27,7 @@ describe Folder::Decorator do
         [
           {
             id: folder.id,
-            name: folder.name,
+            name: folder.name
           }
         ].map(&:stringify_keys)
       end
@@ -63,7 +63,7 @@ describe Folder::Decorator do
       let(:expected_json) do
         {
           id: folder.id,
-          name: folder.name,
+          name: folder.name
         }.deep_stringify_keys
       end
 
@@ -73,4 +73,3 @@ describe Folder::Decorator do
     end
   end
 end
-
