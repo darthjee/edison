@@ -5,10 +5,10 @@
     "binded_http"
   ]);
 
-  function Controller($location, bindedHttp, notifier) {
+  function Controller(builder, notifier, $location, bindedHttp) {
+    this.construct(builder.build($location), notifier, $location);
     this.location = $location;
     this.http     = bindedHttp.bind(this);
-    this.notifier = notifier;
 
     _.bindAll(this, 'setFolders', 'setFiles');
 
@@ -17,6 +17,8 @@
   }
 
   var fn = Controller.prototype;
+
+  _.extend(fn, Cyberhawk.Controller.prototype);
 
   fn.getFolders = function() {
     this.http
@@ -51,9 +53,8 @@
   };
 
   app.controller("Browse.Controller", [
-    "$location",
+    'cyberhawk_requester', 'cyberhawk_notifier', '$location',
     "binded_http",
-    "cyberhawk_notifier",
     Controller
   ]);
 }(window._, window.angular, window.$));
