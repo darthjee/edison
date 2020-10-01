@@ -38,6 +38,11 @@
             Logoff
           </a>
         </li>
+        <li class="nav-item p-2" ng-show="headerController.logged">
+          <%= angular_safe_link_to(:folder, { id: '0' }, class: 'nav-link text-dark"') do %>
+            Browse
+          <% end %>
+        </li>
       </ul>
     </div>
   </nav>
