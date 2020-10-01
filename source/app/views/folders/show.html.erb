@@ -2,7 +2,11 @@
   <div class="card mb-4 shadow-sm">
     <div class="card-header">
       <h4 class="my-0 font-weight-normal">
-        <span ng-repeat="folder in browseController.data.breadcrumbs">/{{folder.name}}</span>/{{browseController.data.name}}
+        <span ng-repeat="folder in browseController.data.breadcrumbs">/
+          <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
+            {{folder.name}}
+          <% end %>
+        </span>/{{browseController.data.name}}
       </h4>
     </div>
     <div class="card-body">
