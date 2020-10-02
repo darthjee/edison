@@ -17,6 +17,7 @@ describe Folder::DecoratorWithBreadcrumbs do
       {
         id: folder.id,
         name: folder.name,
+        parent_id: folder.folder_id,
         breadcrumbs: []
 
       }.stringify_keys
@@ -45,6 +46,7 @@ describe Folder::DecoratorWithBreadcrumbs do
         {
           id: folder.id,
           name: folder.name,
+          parent_id: folder.folder_id,
           breadcrumbs: [decorated_root, decorated_parent]
 
         }.stringify_keys
@@ -67,6 +69,7 @@ describe Folder::DecoratorWithBreadcrumbs do
           {
             id: folder.id,
             name: folder.name,
+            parent_id: folder.folder_id,
             breadcrumbs: []
           }
         ].map(&:stringify_keys)
@@ -85,6 +88,7 @@ describe Folder::DecoratorWithBreadcrumbs do
           id: folder.id,
           name: folder.name,
           breadcrumbs: [],
+          parent_id: folder.folder_id,
           errors: {
             name: ["can't be blank"]
           }
@@ -105,6 +109,7 @@ describe Folder::DecoratorWithBreadcrumbs do
         {
           id: folder.id,
           name: folder.name,
+          parent_id: folder.folder_id,
           breadcrumbs: []
         }.deep_stringify_keys
       end

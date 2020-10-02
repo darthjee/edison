@@ -319,4 +319,146 @@ describe UserFilesController, :logged do
       end
     end
   end
+
+  describe 'GET download' do
+    let(:user)      { logged_user }
+    let(:extension) { '.pdf' }
+    let(:folder)    { create(:folder, user: user) }
+    let(:chunks)    { %w[these are the contents] }
+    let(:folder_id) { folder.id }
+    let(:size)      { chunks.join.size }
+
+    let(:user_file) do
+      create(
+        :user_file,
+        user: user,
+        folder: folder,
+        extension: 'pdf',
+        size: size
+      )
+    end
+
+    let(:parameters) do
+      { format: :raw, folder_id: folder_id, id: user_file.id }
+    end
+
+    before do
+      chunks.each do |chunk|
+        create(:user_file_content, user_file: user_file, content: chunk)
+      end
+
+      get :download, params: parameters
+    end
+
+    it do
+      expect(response).to be_successful
+    end
+
+    it do
+      expect(response.status).to eq(200)
+    end
+
+    it do
+      expect(response.body).to eq(chunks.join)
+    end
+
+    it 'sets content type header' do
+      expect(response.headers['Content-Type'])
+        .to eq('application/pdf')
+    end
+
+    it 'sets content size' do
+      expect(response.headers['Content-Length'])
+        .to eq(size)
+    end
+
+    it 'sets content etag' do
+      expect(response.headers['ETag'])
+        .to eq(user_file.md5)
+    end
+
+    it 'sets content disposition' do
+      expect(response.headers['Content-Disposition'])
+        .to eq("attachment; filename=\"#{user_file.name}\"")
+    end
+
+    context 'when file is in root folder' do
+      let(:folder)    { nil }
+      let(:folder_id) { 0 }
+
+      it do
+        expect(response).to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(200)
+      end
+
+      it do
+        expect(response.body).to eq(chunks.join)
+      end
+    end
+
+    context 'when requesting another folder' do
+      let(:folder_id) { create(:folder, user: user).id }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when file belongs to another user' do
+      let(:user) { create(:user) }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when requesting root folder' do
+      let(:folder_id) { 0 }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when user is not logged', :not_logged do
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+  end
 end

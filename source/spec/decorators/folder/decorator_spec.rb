@@ -12,7 +12,8 @@ describe Folder::Decorator do
     let(:expected_json) do
       {
         id: folder.id,
-        name: folder.name
+        name: folder.name,
+        parent_id: folder.folder_id
       }.stringify_keys
     end
 
@@ -27,7 +28,8 @@ describe Folder::Decorator do
         [
           {
             id: folder.id,
-            name: folder.name
+            name: folder.name,
+            parent_id: folder.folder_id
           }
         ].map(&:stringify_keys)
       end
@@ -44,6 +46,7 @@ describe Folder::Decorator do
         {
           id: folder.id,
           name: folder.name,
+          parent_id: folder.folder_id,
           errors: {
             name: ["can't be blank"]
           }
@@ -63,7 +66,8 @@ describe Folder::Decorator do
       let(:expected_json) do
         {
           id: folder.id,
-          name: folder.name
+          name: folder.name,
+          parent_id: folder.folder_id
         }.deep_stringify_keys
       end
 

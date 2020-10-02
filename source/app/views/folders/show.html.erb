@@ -21,14 +21,26 @@
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td ng-show="browseController.data.id">
+        <%= angular_safe_link_to(:folder, { id: '{{browseController.data.parent_id||0}}' }) do %>
+          ..
+        <% end %>
+      </td>
+    </tr>
     <tr ng-repeat="folder in browseController.folders">
       <td>
         <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
           {{folder.name}}
         <% end %>
+      </td>
     </tr>
     <tr ng-repeat="file in browseController.files">
-      <td>{{file.name}}</td>
+      <td>
+        <%= link_to(download_folder_user_file_safe_path( folder_id: '{{browseController.data.id||0}}', id: '{{file.id}}'), target: 'blank' ) do %>
+          {{file.name}}
+        <% end %>
+      </td>
       <td>{{file.category}}</td>
       <td>{{file.md5}}</td>
       <td>{{file.size | file_size}}</td>
