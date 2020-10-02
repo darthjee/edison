@@ -358,14 +358,14 @@ describe UserFilesController, :logged do
       expect(response.status).to eq(200)
     end
 
-    it 'sets content header' do
+    it 'sets content type header' do
       expect(response.headers['Content-Type'])
         .to eq('application/pdf')
     end
 
     it 'sets content size' do
-      expect(response.headers['Content-Type'])
-        .to eq('application/pdf')
+      expect(response.headers['Content-Length'])
+        .to eq(size)
     end
 
     it 'sets content etag' do
