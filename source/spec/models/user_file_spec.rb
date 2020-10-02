@@ -124,10 +124,10 @@ describe UserFile do
     let(:user_file)    { create(:user_file) }
     let(:chunks)       { %w[this are chunks of file] }
     let(:file_path)    { "/tmp/#{file_name}" }
-    let(:file)         { File.open(file_path, "wb") }
-    let(:reading_file) { File.open(file_path, "rb") }
+    let(:file)         { File.open(file_path, 'wb') }
+    let(:reading_file) { File.open(file_path, 'rb') }
     let(:file_name) do
-      "#{Time.now.to_i}-#{Random.rand(10000)}.txt"
+      "#{Time.now.to_i}-#{Random.rand(10_000)}.txt"
     end
 
     before do
