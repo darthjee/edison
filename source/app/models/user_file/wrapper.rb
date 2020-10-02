@@ -36,7 +36,7 @@ class UserFile < ApplicationRecord
       match = name.match(/\.(?<ext>[^.]*)$/)
       return '' unless match
 
-      match[:ext]
+      match[:ext].downcase
     end
   end
 end

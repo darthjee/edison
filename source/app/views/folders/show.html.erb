@@ -1,5 +1,10 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
+    <li  class="breadcrumb-item">
+      <%= angular_safe_link_to(:folder, { id: 'a' }) do %>
+        /
+      <% end %>
+    </li>
     <li ng-repeat="folder in browseController.data.breadcrumbs" class="breadcrumb-item">
       <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
         {{folder.name}}
@@ -22,14 +27,14 @@
   </thead>
   <tbody>
     <tr>
-      <td ng-show="browseController.data.id">
+      <td ng-show="browseController.data.id" colspan="4">
         <%= angular_safe_link_to(:folder, { id: '{{browseController.data.parent_id||0}}' }) do %>
           ..
         <% end %>
       </td>
     </tr>
     <tr ng-repeat="folder in browseController.folders">
-      <td>
+      <td colspan="4">
         <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
           {{folder.name}}
         <% end %>

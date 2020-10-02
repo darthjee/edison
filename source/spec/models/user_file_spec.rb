@@ -161,6 +161,43 @@ describe UserFile do
     end
   end
 
+  describe 'content_valid?' do
+    subject(:user_file) { create(:user_file, size: size) }
+
+    let(:chunks)      { %w[these are the chunks] }
+    let(:content)     { chunks.join }
+    let(:size)        { content.size }
+    let(:saved_count) { chunks.size }
+
+    before do
+      chunks.take(saved_count).each do |chunk|
+        user_file.user_file_contents.create(content: chunk)
+      end
+    end
+
+    context 'when all the content has been saved' do
+      it do
+        expect(user_file).to be_content_valid
+      end
+    end
+
+    context 'when not all the content has been saved' do
+      let(:saved_count) { chunks.size - 1 }
+
+      it do
+        expect(user_file).not_to be_content_valid
+      end
+    end
+
+    context 'when no content has been saved' do
+      let(:saved_count) { 0 }
+
+      it do
+        expect(user_file).not_to be_content_valid
+      end
+    end
+  end
+
   describe 'validations' do
     it do
       expect(user_file).to be_valid

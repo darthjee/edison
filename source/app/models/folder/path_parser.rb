@@ -6,10 +6,11 @@ class Folder < ApplicationRecord
       new(*args).process
     end
 
-    def initialize(base, user:, parent: nil)
+    def initialize(base, user:, parent: nil, log: false)
       @base   = base
       @user   = user
       @parent = parent
+      @log    = log
     end
 
     def process
@@ -19,7 +20,7 @@ class Folder < ApplicationRecord
 
     private
 
-    attr_reader :base, :user, :parent
+    attr_reader :base, :user, :parent, :log
 
     def objects
       @objects ||= Dir["#{base}/*"]
@@ -35,14 +36,19 @@ class Folder < ApplicationRecord
 
     def process_folders
       folders.each do |path|
+        info("Processing folder #{path}")
         self.class.process(
-          path, user: user, parent: retrieve_folder(path)
+          path,
+          user: user,
+          parent: retrieve_folder(path),
+          log: log
         )
       end
     end
 
     def process_files
       files.each do |path|
+        info("Processing file #{path}")
         File.open(path, 'r') do |file|
           user.user_files.from_file!(file, parent)
         end
@@ -55,6 +61,10 @@ class Folder < ApplicationRecord
       user.folders.find_or_create_by(
         name: name, folder: parent
       ).tap(&:undelete)
+    end
+
+    def info(message)
+      puts message if log
     end
   end
 end

@@ -1,6 +1,8 @@
-.breadcrumb-item::before {
-  display: inline-block;
-  padding-right: 0.5rem;
-  color: #6c757d;
-  content: "/";
+ol.breadcrumb .breadcrumb-item:first-of-type {
+  padding-right: 0px;
+}
+
+ol.breadcrumb .breadcrumb-item:nth-of-type(2)::before {
+  content: "";
+  padding-right: 0px;
 }

@@ -47,4 +47,8 @@ class UserFile < ApplicationRecord
       yield chunk.content
     end
   end
+
+  def content_valid?
+    user_file_contents.sum('char_length(content)') == size
+  end
 end
