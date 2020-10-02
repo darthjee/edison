@@ -323,10 +323,20 @@ describe UserFilesController, :logged do
   describe 'GET download' do
     let(:user)      { logged_user }
     let(:extension) { '.pdf' }
-    let(:user_file) { create(:user_file, user: user, folder: folder) }
     let(:folder)    { create(:folder, user: user) }
     let(:chunks)    { %w[these are the contents] }
     let(:folder_id) { folder.id }
+    let(:size)      { chunks.join.size }
+
+    let(:user_file) do
+      create(
+        :user_file,
+        user: user,
+        folder: folder,
+        extension: 'pdf',
+        size: size
+      )
+    end
 
     let(:parameters) do
       { format: :raw, folder_id: folder_id, id: user_file.id }
@@ -346,6 +356,26 @@ describe UserFilesController, :logged do
 
     it do
       expect(response.status).to eq(200)
+    end
+
+    it 'sets content header' do
+      expect(response.headers['Content-Type'])
+        .to eq('application/pdf')
+    end
+
+    it 'sets content size' do
+      expect(response.headers['Content-Type'])
+        .to eq('application/pdf')
+    end
+
+    it 'sets content etag' do
+      expect(response.headers['ETag'])
+        .to eq(user_file.md5)
+    end
+
+    it 'sets content disposition' do
+      expect(response.headers['Content-Disposition'])
+        .to eq("attachment; filename=\"#{user_file.name}\"")
     end
 
     it 'returns empty' do
