@@ -34,9 +34,10 @@ class UserFilesController < ApplicationController
 
   def download_headers
     {
-      'Content-Type' => Rack::Mime::MIME_TYPES[user_file.extension],
+      'Content-Type' => Rack::Mime::MIME_TYPES[".#{user_file.extension}"],
       'ETag' => user_file.md5,
-      'Content-Disposition' => "attachment; filename=\"#{user_file.name}\""
+      'Content-Disposition' => "attachment; filename=\"#{user_file.name}\"",
+      'Content-Length' => user_file.size
     }
   end
 end
