@@ -40,7 +40,7 @@
       }
 
       if (this.order > 0) {
-        this.exhibit = Math.round(this.exhibit * 10) / 10
+        this.exhibit = Math.round(this.exhibit * 10) / 10;
       }
     }
   }
