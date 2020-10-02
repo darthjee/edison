@@ -41,10 +41,6 @@ describe Folder::DecoratorWithBreadcrumbs do
         Folder::Decorator.new(parent).as_json
       end
 
-      before do
-        create(:folder, user: user)
-      end
-
       let(:expected_json) do
         {
           id: folder.id,
@@ -52,6 +48,10 @@ describe Folder::DecoratorWithBreadcrumbs do
           breadcrumbs: [decorated_root, decorated_parent]
 
         }.stringify_keys
+      end
+
+      before do
+        create(:folder, user: user)
       end
 
       it 'returns breadcrumbs' do
