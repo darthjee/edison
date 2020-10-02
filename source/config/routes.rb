@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 
   resources :folders, only: %i[show], path: :browse do
     resources :folders, only: %i[index]
-    resources :user_files, only: %i[index show], path: :files
+    resources :user_files, only: %i[index show], path: :files do
+      member do
+        get :download, defaults: { format: :raw }
+      end
+    end
   end
 end
