@@ -28,7 +28,11 @@
         <% end %>
     </tr>
     <tr ng-repeat="file in browseController.files">
-      <td>{{file.name}}</td>
+      <td>
+        <%= link_to(download_folder_user_file_path( folder_id: '{{folder.id}}', id: '{{file.id}}' )) do %>
+          {{file.name}}
+        <% end %>
+      </td>
       <td>{{file.category}}</td>
       <td>{{file.md5}}</td>
       <td>{{file.size | file_size}}</td>
