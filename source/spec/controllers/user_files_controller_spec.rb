@@ -358,6 +358,10 @@ describe UserFilesController, :logged do
       expect(response.status).to eq(200)
     end
 
+    it do
+      expect(response.body).to eq(chunks.join)
+    end
+
     it 'sets content type header' do
       expect(response.headers['Content-Type'])
         .to eq('application/pdf')
@@ -378,8 +382,69 @@ describe UserFilesController, :logged do
         .to eq("attachment; filename=\"#{user_file.name}\"")
     end
 
-    it 'returns empty' do
-      expect(response.body).to eq(chunks.join(''))
+    context 'when file is in root folder' do
+      let(:folder)    { nil }
+      let(:folder_id) { 0 }
+
+      it do
+        expect(response).to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(200)
+      end
+
+      it do
+        expect(response.body).to eq(chunks.join)
+      end
+    end
+
+    context 'when requesting another folder' do
+      let(:folder_id) { create(:folder, user: user).id }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when file belongs to another user' do
+      let(:user) { create(:user) }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when requesting root folder' do
+      let(:folder_id) { 0 }
+
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
     end
 
     context 'when user is not logged', :not_logged do
