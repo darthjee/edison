@@ -5,7 +5,7 @@
     }
 
     convert() {
-      return '' + this.getExhibit() + ' ' + this.getSymbol();
+      return "" + this.getExhibit() + " " + this.getSymbol();
     }
 
     getOrder() {
@@ -25,7 +25,7 @@
     }
 
     getSymbol() {
-      var symbols = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+      var symbols = ["B", "KiB", "MiB", "GiB", "TiB"];
 
       return symbols[this.getOrder()];
     }
