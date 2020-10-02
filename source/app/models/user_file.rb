@@ -41,4 +41,10 @@ class UserFile < ApplicationRecord
   def undelete
     update(deleted_at: nil)
   end
+
+  def read
+    user_file_contents.each do |chunk|
+      yield chunk.content
+    end
+  end
 end

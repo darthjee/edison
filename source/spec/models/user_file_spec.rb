@@ -120,6 +120,47 @@ describe UserFile do
     end
   end
 
+  describe '#read' do
+    let(:user_file)    { create(:user_file) }
+    let(:chunks)       { %w[this are chunks of file] }
+    let(:file_path)    { "/tmp/#{file_name}" }
+    let(:file)         { File.open(file_path, "wb") }
+    let(:reading_file) { File.open(file_path, "rb") }
+    let(:file_name) do
+      "#{Time.now.to_i}-#{Random.rand(10000)}.txt"
+    end
+
+    before do
+      chunks.each do |chunk|
+        create(:user_file_content, user_file: user_file, content: chunk)
+      end
+
+      user_file.read do |chunk|
+        file.write(chunk)
+      end
+
+      file.close
+    end
+
+    after do
+      reading_file.close
+
+      File.delete(file_path)
+    end
+
+    it do
+      expect(reading_file.read).to eq(chunks.join(''))
+    end
+
+    context 'when there are no chunks' do
+      let(:chunks) { [] }
+
+      it do
+        expect(reading_file.read).to be_empty
+      end
+    end
+  end
+
   describe 'validations' do
     it do
       expect(user_file).to be_valid
