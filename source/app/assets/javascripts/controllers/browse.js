@@ -10,7 +10,7 @@
     this.location = $location;
     this.http     = bindedHttp.bind(this);
 
-    _.bindAll(this, 'setFolders', 'setFiles');
+    _.bindAll(this, "setFolders", "setFiles");
 
     this.getFolders();
     this.getFiles();
@@ -22,7 +22,7 @@
 
   fn.getFolders = function() {
     this.http
-      .get(this.path('folders'))
+      .get(this.path("folders"))
       .success(this.setFolders);
   };
 
@@ -32,7 +32,7 @@
 
   fn.getFiles = function() {
     this.http
-      .get(this.path('files'))
+      .get(this.path("files"))
       .success(this.setFiles);
   };
 
@@ -41,7 +41,7 @@
   };
 
   fn.path = function(entity) {
-    return this.location.url() + '/' + entity + '.json';
+    return this.location.url() + "/" + entity + ".json";
   };
 
   fn.initRequest = function() {
@@ -53,7 +53,7 @@
   };
 
   app.controller("Browse.Controller", [
-    'cyberhawk_requester', 'cyberhawk_notifier', '$location',
+    "cyberhawk_requester", "cyberhawk_notifier", "$location",
     "binded_http",
     Controller
   ]);
