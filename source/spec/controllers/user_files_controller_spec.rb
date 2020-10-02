@@ -319,4 +319,51 @@ describe UserFilesController, :logged do
       end
     end
   end
+
+  describe 'GET download' do
+    let(:user)      { logged_user }
+    let(:extension) { '.pdf' }
+    let(:user_file) { create(:user_file, user: user, folder: folder) }
+    let(:folder)    { create(:folder, user: user) }
+    let(:chunks)    { %w[these are the contents] }
+    let(:folder_id) { folder.id }
+
+    let(:parameters) do
+      { format: :raw, folder_id: folder_id, id: user_file.id }
+    end
+
+    before do
+      chunks.each do |chunk|
+        create(:user_file_content, user_file: user_file, content: chunk)
+      end
+
+      get :download, params: parameters
+    end
+
+    it do
+      expect(response).to be_successful
+    end
+
+    it do
+      expect(response.status).to eq(200)
+    end
+
+    it 'returns empty' do
+      expect(response.body).to eq(chunks.join(''))
+    end
+
+    context 'when user is not logged', :not_logged do
+      it do
+        expect(response).not_to be_successful
+      end
+
+      it do
+        expect(response.status).to eq(404)
+      end
+
+      it 'returns empty' do
+        expect(response.body).to be_empty
+      end
+    end
+  end
 end
