@@ -21,11 +21,19 @@
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td>
+        <%= angular_safe_link_to(:folder, { id: '{{browseController.data.parent_id}}' }) do %>
+          ..
+        <% end %>
+      </td>
+    </tr>
     <tr ng-repeat="folder in browseController.folders">
       <td>
         <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
           {{folder.name}}
         <% end %>
+      </td>
     </tr>
     <tr ng-repeat="file in browseController.files">
       <td>
