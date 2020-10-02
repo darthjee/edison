@@ -1,4 +1,4 @@
-(function(_, angular, $) {
+(function(_, angular, $, Cyberhawk) {
   var app = angular.module("browse/controller", [
     "cyberhawk/controller",
     "cyberhawk/notifier",
@@ -57,4 +57,4 @@
     "binded_http",
     Controller
   ]);
-}(window._, window.angular, window.$));
+}(window._, window.angular, window.$, window.Cyberhawk));
