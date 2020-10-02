@@ -6,7 +6,8 @@ describe FoldersController, :logged do
   describe 'GET show' do
     let(:parameters) { { format: :json, id: folder_id } }
 
-    let(:expected_response) { Folder::Decorator.new(folder).to_json }
+    let(:decorator_class)   { Folder::DecoratorWithBreadcrumbs }
+    let(:expected_response) { decorator_class.new(folder).to_json }
     let!(:folder)           { create(:folder, user: logged_user) }
     let(:folder_id)         { folder.id }
 
@@ -15,7 +16,6 @@ describe FoldersController, :logged do
     end
 
     context 'when folder is not specified' do
-      let(:expected_response) { Folder::Decorator.new(folder).to_json }
       let(:folder)            { Folder.new }
       let(:folder_id)         { 0 }
 
@@ -45,6 +45,38 @@ describe FoldersController, :logged do
     end
 
     context 'when folder is specified' do
+      context 'when user is not logged', :not_logged do
+        it do
+          expect(response).not_to be_successful
+        end
+
+        it do
+          expect(response.status).to eq(404)
+        end
+
+        it 'returns empty' do
+          expect(response.body).to be_empty
+        end
+      end
+
+      context 'when user is logged' do
+        it do
+          expect(response).to be_successful
+        end
+
+        it 'returns user inner folders' do
+          expect(response.body).to eq(expected_response)
+        end
+      end
+    end
+
+    context 'when folder is a sub folder' do
+      let(:parent_folder) { create(:folder, user: logged_user) }
+
+      let(:folder) do
+        create(:folder, user: logged_user, folder: parent_folder)
+      end
+
       context 'when user is not logged', :not_logged do
         it do
           expect(response).not_to be_successful

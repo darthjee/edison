@@ -16,8 +16,13 @@
         controller: "Home.Controller",
         controllerAs: "hc"
       }
+    }, {
+      routes: ["/browse/:id"],
+      config: {
+        controller: "Browse.Controller",
+        controllerAs: "browseController"
+      }
     }];
     provider.$get().bindRoutes();
   }]);
 }(window.angular));
-

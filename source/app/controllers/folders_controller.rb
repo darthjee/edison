@@ -4,7 +4,10 @@ class FoldersController < ApplicationController
   include OnePageApplication
   include FolderAccessible
 
-  resource_for :folder, only: %i[index show]
+  resource_for :folder, only: %i[index]
+  resource_for :folder,
+               only: %i[show],
+               decorator: Folder::DecoratorWithBreadcrumbs
   before_action :check_logged!
 
   private
@@ -18,6 +21,6 @@ class FoldersController < ApplicationController
   def folder
     return Folder.new if folder_id.to_i.zero?
 
-    folders.find(folder_id)
+    user_folders.find(folder_id)
   end
 end

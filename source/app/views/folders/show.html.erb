@@ -1,0 +1,37 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li ng-repeat="folder in browseController.data.breadcrumbs" class="breadcrumb-item">
+      <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
+        {{folder.name}}
+      <% end %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+       {{browseController.data.name}}
+    </li>
+  </ol>
+</nav>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">MD5</th>
+      <th scope="col">Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="folder in browseController.folders">
+      <td>
+        <%= angular_safe_link_to(:folder, { id: '{{folder.id}}' }) do %>
+          {{folder.name}}
+        <% end %>
+    </tr>
+    <tr ng-repeat="file in browseController.files">
+      <td>{{file.name}}</td>
+      <td>{{file.category}}</td>
+      <td>{{file.md5}}</td>
+      <td>{{file.size | file_size}}</td>
+    </tr>
+  </tbody>
+</table>
