@@ -6,9 +6,9 @@ class UserFile < ApplicationRecord
       new(*args).process
     end
 
-    def initialize(relation, file, folder)
+    def initialize(relation, file_path, folder)
       @relation = relation
-      @file     = Wrapper.new(file)
+      @file     = Wrapper.new(file_path)
       @folder   = folder
     end
 

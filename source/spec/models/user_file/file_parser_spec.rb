@@ -3,11 +3,8 @@
 require 'spec_helper'
 
 describe UserFile::FileParser do
-  subject(:user_file) { build(:user_file) }
-
   describe '.process' do
     let(:user)      { create(:user) }
-    let(:file)      { File.open(file_path, 'r') }
     let(:chunks)    { Random.rand(4..10) }
     let(:blob_size) { Random.rand(10..20) }
     let(:file_path) { "/tmp/#{file_name}" }
@@ -18,7 +15,7 @@ describe UserFile::FileParser do
     end
 
     let(:processed_file) do
-      described_class.process(user.user_files, file, folder)
+      described_class.process(user.user_files, file_path, folder)
     end
 
     let(:file_size) do
