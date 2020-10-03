@@ -187,12 +187,11 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists for other user' do
-      let(:previous_file) { File.open(file_path, 'r') }
       let(:folder)        { nil }
       let(:other_user)    { create(:user) }
 
       let(:previous_saved_entry) do
-        described_class.process(other_user.user_files, previous_file, folder)
+        described_class.process(other_user.user_files, file_path, folder)
       end
 
       before do

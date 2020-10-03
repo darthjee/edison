@@ -176,9 +176,7 @@ describe Folder::PathParser do
       before do
         user.folders.create(name: :folder2, folder: folder_1)
 
-        File.open(root_file_path, 'r') do |file|
-          user.user_files.from_file!(file, nil)
-        end
+        user.user_files.from_file!(root_file_path, nil)
       end
 
       it do
@@ -217,9 +215,7 @@ describe Folder::PathParser do
       end
 
       before do
-        File.open(file_path, 'r') do |file|
-          user.user_files.from_file!(file, folder_2)
-        end
+        user.user_files.from_file!(file_path, folder_2)
       end
 
       it do
