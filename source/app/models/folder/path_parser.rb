@@ -49,9 +49,7 @@ class Folder < ApplicationRecord
     def process_files
       files.each do |path|
         info("Processing file #{path}")
-        File.open(path, 'r') do |file|
-          user.user_files.from_file!(file, parent)
-        end
+        user.user_files.from_file!(path, parent)
       end
     end
 
