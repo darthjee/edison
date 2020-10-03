@@ -121,10 +121,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, folder)
+        described_class.process(user.user_files, file_path, folder)
       end
 
       before do
@@ -145,10 +143,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file had been deleted' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, folder)
+        described_class.process(user.user_files, file_path, folder)
       end
 
       before do
@@ -175,10 +171,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists in another folder' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, nil)
+        described_class.process(user.user_files, file_path, nil)
       end
 
       before do
