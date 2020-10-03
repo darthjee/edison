@@ -3,11 +3,8 @@
 require 'spec_helper'
 
 describe UserFile::FileParser do
-  subject(:user_file) { build(:user_file) }
-
   describe '.process' do
     let(:user)      { create(:user) }
-    let(:file)      { File.open(file_path, 'r') }
     let(:chunks)    { Random.rand(4..10) }
     let(:blob_size) { Random.rand(10..20) }
     let(:file_path) { "/tmp/#{file_name}" }
@@ -18,7 +15,7 @@ describe UserFile::FileParser do
     end
 
     let(:processed_file) do
-      described_class.process(user.user_files, file, folder)
+      described_class.process(user.user_files, file_path, folder)
     end
 
     let(:file_size) do
@@ -124,10 +121,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, folder)
+        described_class.process(user.user_files, file_path, folder)
       end
 
       before do
@@ -148,10 +143,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file had been deleted' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, folder)
+        described_class.process(user.user_files, file_path, folder)
       end
 
       before do
@@ -178,10 +171,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists in another folder' do
-      let(:previous_file) { File.open(file_path, 'r') }
-
       let(:previous_saved_entry) do
-        described_class.process(user.user_files, previous_file, nil)
+        described_class.process(user.user_files, file_path, nil)
       end
 
       before do
@@ -196,12 +187,11 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists for other user' do
-      let(:previous_file) { File.open(file_path, 'r') }
       let(:folder)        { nil }
       let(:other_user)    { create(:user) }
 
       let(:previous_saved_entry) do
-        described_class.process(other_user.user_files, previous_file, folder)
+        described_class.process(other_user.user_files, file_path, folder)
       end
 
       before do

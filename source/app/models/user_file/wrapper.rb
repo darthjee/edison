@@ -2,10 +2,10 @@
 
 class UserFile < ApplicationRecord
   class Wrapper
-    delegate :close, :path, :eof?, :read, to: :file
+    delegate :close, :eof?, :read, to: :file
 
-    def initialize(file)
-      @file = file
+    def initialize(path)
+      @path = path
     end
 
     def name
@@ -30,7 +30,11 @@ class UserFile < ApplicationRecord
 
     private
 
-    attr_reader :file
+    attr_reader :path
+
+    def file
+      @file ||= File.open(path, 'r')
+    end
 
     def extract_extension
       match = name.match(/\.(?<ext>[^.]*)$/)

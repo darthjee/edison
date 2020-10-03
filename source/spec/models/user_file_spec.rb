@@ -7,7 +7,6 @@ describe UserFile do
 
   describe '.from_file!' do
     let(:user)      { create(:user) }
-    let(:file)      { File.open(file_path) }
     let(:folder)    { create(:folder, user: user) }
     let(:chunks)    { Random.rand(4..10) }
     let(:blob_size) { Random.rand(10..20) }
@@ -18,7 +17,7 @@ describe UserFile do
     end
 
     let(:from_file) do
-      user.user_files.from_file!(file, folder)
+      user.user_files.from_file!(file_path, folder)
     end
 
     let(:file_size) do

@@ -17,12 +17,14 @@ class UserFile < ApplicationRecord
 
         save_chunk
       end
+    ensure
+      close
     end
 
     private
 
     attr_reader :user_file, :file
-    delegate :eof?, to: :file
+    delegate :eof?, :close, to: :file
 
     def content_chunk
       file.read(Settings.file_chunk_size)

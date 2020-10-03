@@ -6,9 +6,9 @@ class UserFile < ApplicationRecord
       new(*args).process
     end
 
-    def initialize(relation, file, folder)
+    def initialize(relation, file_path, folder)
       @relation = relation
-      @file     = Wrapper.new(file)
+      @file     = Wrapper.new(file_path)
       @folder   = folder
     end
 
@@ -38,13 +38,16 @@ class UserFile < ApplicationRecord
     end
 
     def create_user_file
-      scope.create(
+      creation_scope.create.tap do |entry|
+        ChunkSaver.process(entry, file)
+      end
+    end
+
+    def creation_scope
+      scope.where(
         extension: extension,
         category: category
-      ).tap do |entry|
-        ChunkSaver.process(entry, file)
-        file.close
-      end
+      )
     end
 
     def delete_old_entries
