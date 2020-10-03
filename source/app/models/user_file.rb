@@ -43,7 +43,7 @@ class UserFile < ApplicationRecord
   end
 
   def read
-    user_file_contents.each do |chunk|
+    user_file_contents.find_each do |chunk|
       yield chunk.content
     end
   end
