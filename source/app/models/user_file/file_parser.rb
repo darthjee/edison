@@ -40,7 +40,6 @@ class UserFile < ApplicationRecord
     def create_user_file
       creation_scope.create.tap do |entry|
         ChunkSaver.process(entry, file)
-        file.close
       end
     end
 
