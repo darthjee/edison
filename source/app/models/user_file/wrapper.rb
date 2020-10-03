@@ -5,7 +5,11 @@ class UserFile < ApplicationRecord
     delegate :close, :path, :eof?, :read, to: :file
 
     def initialize(file)
-      @file = file
+      if file.is_a?(File)
+        @file = file
+      else
+        @file_path = file
+      end
     end
 
     def name
@@ -30,7 +34,11 @@ class UserFile < ApplicationRecord
 
     private
 
-    attr_reader :file
+    attr_reader :file_path
+
+    def file
+      @file ||= File.open(file_path, 'r')
+    end
 
     def extract_extension
       match = name.match(/\.(?<ext>[^.]*)$/)

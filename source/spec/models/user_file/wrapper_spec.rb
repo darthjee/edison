@@ -3,9 +3,8 @@
 require 'spec_helper'
 
 describe UserFile::Wrapper do
-  subject(:wrapper) { described_class.new(file) }
+  subject(:wrapper) { described_class.new(file_path) }
 
-  let(:file)      { File.open(file_path, 'r') }
   let(:file_path) { "/tmp/#{file_name}" }
   let(:extension) { %w[text txt].sample }
   let(:file_name) do
