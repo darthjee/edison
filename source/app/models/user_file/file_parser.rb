@@ -43,6 +43,7 @@ class UserFile < ApplicationRecord
         category: category
       ).tap do |entry|
         ChunkSaver.process(entry, file)
+        file.close
       end
     end
 
