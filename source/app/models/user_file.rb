@@ -34,8 +34,8 @@ class UserFile < ApplicationRecord
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 
-  def self.from_file!(file, folder)
-    FileParser.process(self, file, folder)
+  def self.from_file!(file_path, folder)
+    FileParser.process(self, file_path, folder)
   end
 
   def undelete
