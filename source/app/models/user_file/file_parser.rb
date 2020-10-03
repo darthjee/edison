@@ -38,13 +38,17 @@ class UserFile < ApplicationRecord
     end
 
     def create_user_file
-      scope.create(
-        extension: extension,
-        category: category
-      ).tap do |entry|
+      creation_scope.create.tap do |entry|
         ChunkSaver.process(entry, file)
         file.close
       end
+    end
+
+    def creation_scope
+      scope.where(
+        extension: extension,
+        category: category
+      )
     end
 
     def delete_old_entries
