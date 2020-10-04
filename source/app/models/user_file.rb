@@ -32,7 +32,26 @@ class UserFile < ApplicationRecord
               only_integer: true
             }
 
-  scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :not_deleted,  -> { where(deleted_at: nil) }
+  scope :not_uploaded, -> { where(uploaded_at: nil) }
+
+  def self.with_valid_content
+    ids = joins(:user_file_contents)
+          .group(:user_file_id, :size)
+          .having('size = sum(char_length(user_file_contents.content))')
+          .pluck(:id)
+
+    where(id: ids)
+  end
+
+  def self.without_valid_content
+    ids = joins(:user_file_contents)
+          .group(:user_file_id, :size)
+          .having('size != sum(char_length(user_file_contents.content))')
+          .pluck(:id)
+
+    where(id: ids)
+  end
 
   def self.from_file!(file_path, folder)
     FileParser.process(self, file_path, folder)
@@ -50,5 +69,9 @@ class UserFile < ApplicationRecord
 
   def content_valid?
     user_file_contents.sum('char_length(content)') == size
+  end
+
+  def uploaded?
+    uploaded_at.present?
   end
 end

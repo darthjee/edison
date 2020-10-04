@@ -46,7 +46,8 @@ class UserFile < ApplicationRecord
     def creation_scope
       scope.where(
         extension: extension,
-        category: category
+        category: category,
+        uploaded_at: Time.now
       )
     end
 

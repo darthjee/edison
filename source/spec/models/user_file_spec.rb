@@ -197,6 +197,20 @@ describe UserFile do
     end
   end
 
+  describe '#uploaded?' do
+    context 'when file has been uploaded' do
+      subject(:user_file) { create(:user_file, :uploaded) }
+
+      it { is_expected.to be_uploaded }
+    end
+
+    context 'when file has not been uploaded' do
+      subject(:user_file) { create(:user_file) }
+
+      it { is_expected.not_to be_uploaded }
+    end
+  end
+
   describe 'validations' do
     it do
       expect(user_file).to be_valid
@@ -263,6 +277,87 @@ describe UserFile do
 
     it do
       expect(user_file).not_to validate_presence_of(:folder)
+    end
+  end
+
+  describe 'scopes' do
+    describe 'not_deleted' do
+      let!(:not_deleted) { create(:user_file) }
+      let!(:deleted)     { create(:user_file, :deleted) }
+
+      it do
+        expect(described_class.not_deleted).to include(not_deleted)
+      end
+
+      it do
+        expect(described_class.not_deleted).not_to include(deleted)
+      end
+    end
+
+    describe 'without_valid_content' do
+      let!(:valid_user_file)   { create(:user_file, size: size) }
+      let!(:invalid_user_file) { create(:user_file, size: size + 1) }
+
+      let(:chunks) { %w[this is a super valid content] }
+      let(:size)   { chunks.join.size }
+
+      before do
+        chunks.each do |chunk|
+          create(
+            :user_file_content,
+            user_file: valid_user_file,
+            content: chunk
+          )
+          create(
+            :user_file_content,
+            user_file: invalid_user_file,
+            content: chunk
+          )
+        end
+      end
+
+      it do
+        expect(described_class.without_valid_content)
+          .to include(invalid_user_file)
+      end
+
+      it do
+        expect(described_class.without_valid_content)
+          .not_to include(valid_user_file)
+      end
+    end
+
+    describe 'with_valid_content' do
+      let!(:valid_user_file)   { create(:user_file, size: size) }
+      let!(:invalid_user_file) { create(:user_file, size: size + 1) }
+
+      let(:chunks) { %w[this is a super valid content] }
+      let(:size)   { chunks.join.size }
+
+      before do
+        chunks.each do |chunk|
+          create(
+            :user_file_content,
+            user_file: valid_user_file,
+            content: chunk
+          )
+          create(
+            :user_file_content,
+            user_file: invalid_user_file,
+            content: chunk
+          )
+        end
+      end
+
+      it do
+        expect(described_class.with_valid_content)
+          .not_to include(invalid_user_file)
+      end
+
+      it do
+        expect(described_class.with_valid_content)
+          .to include(valid_user_file)
+      end
     end
   end
 end

@@ -71,6 +71,10 @@ describe UserFile::FileParser do
       expect(processed_file.folder).to eq(folder)
     end
 
+    it 'sets file as uploaded' do
+      expect(processed_file).to be_uploaded
+    end
+
     it do
       expect { processed_file }
         .to change(UserFile, :count)
