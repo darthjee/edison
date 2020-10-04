@@ -68,6 +68,6 @@ services:
   edison_production:
     env_file: .env.production
     container_name: edison_production
-    image: registry.heroku.com/darthjee-edison/web
+    image: $PRODUCTION_IMAGE
     volumes:
       - ./source/upload:/home/app/app/upload
