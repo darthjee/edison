@@ -7,10 +7,12 @@ class Settings
 
   with_settings(
     :password_salt,
+    cache_age: 10.seconds,
+    favicon: '/favicon.ico',
+    file_chunk_size: UserFileContent::BLOB_LIMIT,
     hex_code_size: 16,
     session_period: 2.days,
-    cache_age: 10.seconds,
-    file_chunk_size: UserFileContent::BLOB_LIMIT,
+    title: 'Edison',
     upload_folder: '/home/app/app/upload'
   )
 end
