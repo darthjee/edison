@@ -51,8 +51,10 @@ class Folder < ApplicationRecord
         info("Processing file #{path}")
         user.user_files.from_file!(path, parent)
       end
-    rescue Mysql2::Error, ActiveRecord::StatementInvalid,ActiveRecord::RecordNotSaved => e
-      info("ERROR " * 4)
+    rescue Mysql2::Error,
+           ActiveRecord::StatementInvalid,
+           ActiveRecord::RecordNotSaved => e
+      info('ERROR ' * 4)
       info(e.message)
     end
 
