@@ -13,11 +13,7 @@ class UserFile < ApplicationRecord
     end
 
     def process
-      ActiveRecord::Base.transaction do
-        delete_old_entries
-
-        user_file.tap(&:undelete)
-      end
+      process_file
     end
 
     private
@@ -26,49 +22,25 @@ class UserFile < ApplicationRecord
 
     delegate :path, :name, :extension, :category,
              :size, :md5sum, to: :file
+    delegate :content_valid?, to: :user_file
+    delegate :user_file, :old_entries, to: :finder_creator
 
-    def user_file
-      @user_file ||= find_or_create_user_file
-    end
+    def process_file
+      ChunkSaver.process(user_file, file) unless content_valid?
 
-    def find_or_create_user_file
-      return scope.first if scope.any?
-
-      create_user_file
-    end
-
-    def create_user_file
-      creation_scope.create.tap do |entry|
-        ChunkSaver.process(entry, file)
+      ActiveRecord::Base.transaction do
+        delete_old_entries
+        user_file.tap(&:mark_uploaded)
       end
     end
 
-    def creation_scope
-      scope.where(
-        extension: extension,
-        category: category,
-        uploaded_at: Time.now
-      )
+    def finder_creator
+      @finder_creator ||= ParserScopes.new(relation, file, folder)
     end
 
     def delete_old_entries
-      name_scope
-        .not_deleted
+      old_entries
         .update_all(deleted_at: Time.now)
-    end
-
-    def scope
-      @scope ||= name_scope.where(
-        md5: md5sum,
-        size: size
-      )
-    end
-
-    def name_scope
-      @name_scope ||= relation.where(
-        name: name,
-        folder: folder
-      )
     end
   end
 end

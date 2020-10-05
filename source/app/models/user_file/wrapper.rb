@@ -2,7 +2,7 @@
 
 class UserFile < ApplicationRecord
   class Wrapper
-    delegate :close, :eof?, :read, to: :file
+    delegate :close, :closed?, :eof?, :read, to: :file
 
     def initialize(path)
       @path = path

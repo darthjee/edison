@@ -12,11 +12,8 @@ class UserFile < ApplicationRecord
     end
 
     def process
-      loop do
-        break if eof?
-
-        save_chunk
-      end
+      skip_existing_chunks
+      read_and_save_chunks
     ensure
       close
     end
@@ -26,6 +23,18 @@ class UserFile < ApplicationRecord
     attr_reader :user_file, :file
     delegate :eof?, :close, to: :file
 
+    def skip_existing_chunks
+      existing_chunks.times { content_chunk }
+    end
+
+    def read_and_save_chunks
+      loop do
+        break if eof?
+
+        save_chunk
+      end
+    end
+
     def content_chunk
       file.read(Settings.file_chunk_size)
     end
@@ -34,6 +43,10 @@ class UserFile < ApplicationRecord
       user_file.user_file_contents.create(
         content: content_chunk
       )
+    end
+
+    def existing_chunks
+      user_file.user_file_contents.count
     end
   end
 end

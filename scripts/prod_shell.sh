@@ -9,7 +9,7 @@ function run() {
 }
 
 function clean_env() {
-  sleep 3
+  sleep 5
   echo "" > .env.production
 }
 

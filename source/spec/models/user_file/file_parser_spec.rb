@@ -45,6 +45,10 @@ describe UserFile::FileParser do
 
     it { expect(processed_file).to be_persisted }
 
+    it { expect(processed_file.reload).not_to be_deleted }
+
+    it { expect(processed_file.reload).to be_uploaded }
+
     it 'saves file name' do
       expect(processed_file.name).to eq(file_name)
     end
@@ -116,7 +120,7 @@ describe UserFile::FileParser do
       end
     end
 
-    context 'when file is na image' do
+    context 'when file is an image' do
       let(:extension) { 'jpeg' }
 
       it 'saves category' do
@@ -125,12 +129,8 @@ describe UserFile::FileParser do
     end
 
     context 'when same file already exists' do
-      let(:previous_saved_entry) do
+      let!(:previous_saved_entry) do
         described_class.process(user.user_files, file_path, folder)
-      end
-
-      before do
-        previous_saved_entry
       end
 
       it { expect(processed_file).to eq(previous_saved_entry) }
@@ -143,6 +143,76 @@ describe UserFile::FileParser do
       it do
         expect { processed_file }
           .not_to change(UserFileContent, :count)
+      end
+
+      it do
+        expect { processed_file }
+          .not_to(change { previous_saved_entry.reload.deleted_at })
+      end
+
+      it do
+        expect(processed_file.reload).not_to be_deleted
+      end
+
+      it do
+        expect { processed_file }
+          .not_to(change { previous_saved_entry.reload.uploaded_at })
+      end
+    end
+
+    context 'when user_file has been partially saved' do
+      let!(:previous_saved_entry) do
+        described_class.process(user.user_files, file_path, folder)
+      end
+      let(:expected_chunks) do
+        (file_size * 1.0 / blob_size).ceil
+      end
+      let(:missing_chunks) do
+        Random.rand(1..expected_chunks)
+      end
+
+      before do
+        previous_saved_entry.update(uploaded_at: nil)
+        previous_saved_entry
+          .user_file_contents
+          .order(id: :desc)
+          .limit(missing_chunks)
+          .delete_all
+      end
+
+      it { expect(processed_file).to eq(previous_saved_entry) }
+
+      it do
+        expect { processed_file }
+          .not_to change(UserFile, :count)
+      end
+
+      it do
+        expect { processed_file }
+          .to change(UserFileContent, :count)
+          .by(missing_chunks)
+      end
+
+      it do
+        expect { processed_file }
+          .not_to(change { previous_saved_entry.reload.deleted_at })
+      end
+
+      it do
+        expect(processed_file.reload).not_to be_deleted
+      end
+
+      it do
+        expect { processed_file }
+          .to change { previous_saved_entry.reload.content_valid? }
+          .from(false)
+          .to(true)
+      end
+
+      it do
+        expect { processed_file }
+          .to change { previous_saved_entry.reload.uploaded_at }
+          .from(nil)
       end
     end
 

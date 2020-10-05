@@ -6,8 +6,8 @@ class Folder < ApplicationRecord
       new(*args).process
     end
 
-    def initialize(base, user:, parent: nil, log: false)
-      @base   = base
+    def initialize(folder, user:, parent: nil, log: false)
+      @folder = Wrapper.new(folder)
       @user   = user
       @parent = parent
       @log    = log
@@ -20,19 +20,8 @@ class Folder < ApplicationRecord
 
     private
 
-    attr_reader :base, :user, :parent, :log
-
-    def objects
-      @objects ||= Dir["#{base}/*"]
-    end
-
-    def folders
-      objects.reject { |obj| File.file? obj }
-    end
-
-    def files
-      objects.select { |obj| File.file? obj }
-    end
+    attr_reader :folder, :user, :parent, :log
+    delegate :folders, :files, to: :folder
 
     def process_folders
       folders.each do |path|
@@ -47,10 +36,12 @@ class Folder < ApplicationRecord
     end
 
     def process_files
-      files.each do |path|
-        info("Processing file #{path}")
-        user.user_files.from_file!(path, parent)
-      end
+      files.each { |path| process_file(path) }
+    end
+
+    def process_file(path)
+      info("Processing file #{path}")
+      user.user_files.from_file!(path, parent)
     rescue Mysql2::Error,
            ActiveRecord::StatementInvalid,
            ActiveRecord::RecordNotSaved => e

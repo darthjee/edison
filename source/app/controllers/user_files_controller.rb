@@ -10,13 +10,15 @@ class UserFilesController < ApplicationController
 
   def download
     user_file.read do |chunk|
-      response.stream.write chunk
+      stream.write chunk
     end
   ensure
-    response.stream.close
+    stream.close
   end
 
   private
+
+  delegate :stream, to: :response
 
   def user_files
     @user_files ||= objects

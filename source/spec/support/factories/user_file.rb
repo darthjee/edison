@@ -16,5 +16,9 @@ FactoryBot.define do
     trait :uploaded do
       uploaded_at { Time.now }
     end
+
+    trait :not_uploaded do
+      uploaded_at { nil }
+    end
   end
 end
