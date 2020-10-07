@@ -13,6 +13,7 @@ class UserFile < ApplicationRecord
     def read
       result.each do |content|
         yield content.first
+        sleep 0.1
       end
     end
 
