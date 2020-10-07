@@ -43,10 +43,8 @@ class UserFile < ApplicationRecord
     update(deleted_at: nil)
   end
 
-  def read
-    user_file_contents.find_each do |chunk|
-      yield chunk.content
-    end
+  def read(&block)
+    Reader.read(self, &block)
   end
 
   def content_valid?
