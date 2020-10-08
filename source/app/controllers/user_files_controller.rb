@@ -39,8 +39,7 @@ class UserFilesController < ApplicationController
     {
       'Content-Type' => 'text/event-stream',
       'ETag' => user_file.md5,
-      'Content-Disposition' => download_content_disposition,
-      'Content-Length' => user_file.size
+      'Content-Disposition' => download_content_disposition
     }
   end
 

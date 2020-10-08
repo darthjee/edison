@@ -362,15 +362,14 @@ describe UserFilesController, :logged do
       expect(response.body).to eq(chunks.join)
     end
 
-    xit 'sets content type header' do
+    it 'sets content type header' do
       expect(response.headers['Content-Type'])
-        .to eq('application/pdf')
+        .to eq('text/event-stream')
     end
 
-    xit 'sets content size' do
-      binding.pry
+    it 'does not sets content size' do
       expect(response.headers['Content-Length'])
-        .to eq(size)
+        .to be_nil
     end
 
     it 'sets content etag' do
