@@ -11,9 +11,13 @@ class UserFile < ApplicationRecord
     end
 
     def read
-      result.each do |content|
-        yield content.first
-        GC.start
+      loop do
+        break unless scoped_content.any?
+
+        yield scoped_content.first.content
+        sleep 1
+
+        next_content
       end
     end
 
@@ -21,14 +25,18 @@ class UserFile < ApplicationRecord
 
     attr_reader :user_file
 
-    delegate :id, to: :user_file
+    delegate :user_file_contents, to: :user_file
 
-    def result
-      ActiveRecord::Base.connection.execute(query)
+    def scoped_content
+      user_file_contents.offset(index).limit(1)
     end
 
-    def query
-      "SELECT content FROM user_file_contents WHERE user_file_id = #{id}"
+    def index
+      @index ||= 0
+    end
+
+    def next_content
+      @index += 1
     end
   end
 end
