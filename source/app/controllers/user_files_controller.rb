@@ -3,6 +3,7 @@
 class UserFilesController < ApplicationController
   include OnePageApplication
   include FolderAccessible
+  include ActionController::Live
 
   resource_for :user_file, only: %i[index show]
   before_action :check_logged!
@@ -36,7 +37,7 @@ class UserFilesController < ApplicationController
 
   def download_headers
     {
-      'Content-Type' => download_content_type,
+      'Content-Type' => 'text/event-stream',
       'ETag' => user_file.md5,
       'Content-Disposition' => download_content_disposition,
       'Content-Length' => user_file.size
