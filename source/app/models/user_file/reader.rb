@@ -11,12 +11,12 @@ class UserFile < ApplicationRecord
     end
 
     def read
-      3.times do
-        # break unless scoped_content.any?
+      loop do
+        break unless scoped_content.any?
 
         chunk = scoped_content.first
         yield chunk.content
-        Rails.logger.info("READING CHUNK #{chunk.id}")
+        Rails.logger.error("READING CHUNK #{chunk.id}")
 
         next_content
       end
