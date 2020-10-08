@@ -364,12 +364,12 @@ describe UserFilesController, :logged do
 
     it 'sets content type header' do
       expect(response.headers['Content-Type'])
-        .to eq('application/pdf')
+        .to eq('text/event-stream')
     end
 
-    it 'sets content size' do
+    it 'does not sets content size' do
       expect(response.headers['Content-Length'])
-        .to eq(size)
+        .to be_nil
     end
 
     it 'sets content etag' do
