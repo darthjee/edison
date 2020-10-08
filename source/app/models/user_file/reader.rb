@@ -17,6 +17,7 @@ class UserFile < ApplicationRecord
         chunk = scoped_content.first
         yield chunk.content
         Rails.logger.info("READING CHUNK #{chunk.id}")
+        sleep 2
 
         next_content
       end
