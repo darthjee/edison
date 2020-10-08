@@ -14,9 +14,7 @@ class UserFile < ApplicationRecord
       loop do
         break unless scoped_content.any?
 
-        chunk = scoped_content.first
-        yield chunk.content
-        Rails.logger.error("READING CHUNK #{chunk.id}")
+        yield scoped_content.first.content
 
         next_content
       end
