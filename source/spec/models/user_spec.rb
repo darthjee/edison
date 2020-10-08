@@ -85,4 +85,46 @@ describe User do
       end
     end
   end
+
+  describe 'delete_all' do
+    let(:user)         { create(:user) }
+    let(:folder)       { create(:folder, user: user) }
+    let(:inner_folder) { create(:folder, folder: folder, user: user) }
+    let(:user_file)    { create(:user_file, folder: inner_folder, user: user) }
+
+    before do
+      create(:user_file_content, user_file: user_file)
+      create(:session, user: user)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(UserFileContent, :count)
+        .by(-1)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(UserFile, :count)
+        .by(-1)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(Folder, :count)
+        .by(-2)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(Session, :count)
+        .by(-1)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(described_class, :count)
+        .by(-1)
+    end
+  end
 end

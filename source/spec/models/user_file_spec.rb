@@ -294,4 +294,24 @@ describe UserFile do
       end
     end
   end
+
+  describe 'delete_all' do
+    let(:user_file) { create(:user_file) }
+
+    before do
+      create(:user_file_content, user_file: user_file)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(UserFileContent, :count)
+        .by(-1)
+    end
+
+    it do
+      expect { described_class.delete_all }
+        .to change(described_class, :count)
+        .by(-1)
+    end
+  end
 end

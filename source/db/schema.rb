@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_165752) do
+ActiveRecord::Schema.define(version: 2020_10_08_122916) do
 
   create_table "folders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -62,10 +62,10 @@ ActiveRecord::Schema.define(version: 2020_10_04_165752) do
     t.index ["login"], name: "index_users_on_login", unique: true
   end
 
-  add_foreign_key "folders", "folders"
-  add_foreign_key "folders", "users"
-  add_foreign_key "sessions", "users"
-  add_foreign_key "user_file_contents", "user_files"
-  add_foreign_key "user_files", "folders"
-  add_foreign_key "user_files", "users"
+  add_foreign_key "folders", "folders", on_delete: :cascade
+  add_foreign_key "folders", "users", on_delete: :cascade
+  add_foreign_key "sessions", "users", on_delete: :cascade
+  add_foreign_key "user_file_contents", "user_files", on_delete: :cascade
+  add_foreign_key "user_files", "folders", on_delete: :cascade
+  add_foreign_key "user_files", "users", on_delete: :cascade
 end

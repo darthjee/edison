@@ -43,10 +43,6 @@ class UserFilesController < ApplicationController
     }
   end
 
-  def download_content_type
-    Rack::Mime::MIME_TYPES[".#{user_file.extension}"]
-  end
-
   def download_content_disposition
     "attachment; filename=\"#{user_file.name}\""
   end
